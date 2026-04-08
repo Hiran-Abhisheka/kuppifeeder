@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _FeedView extends StatelessWidget {
-  const _FeedView({super.key});
+  const _FeedView();
 
   @override
   Widget build(BuildContext context) {

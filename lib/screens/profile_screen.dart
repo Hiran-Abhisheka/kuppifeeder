@@ -128,13 +128,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       elevation: 0,
                       flexibleSpace: FlexibleSpaceBar(
                         background: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                const Color(0xFF6C63FF),
-                                const Color(0xFF7B68EE),
+                                Color(0xFF6C63FF),
+                                Color(0xFF7B68EE),
                               ],
                             ),
                           ),
@@ -436,9 +436,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // Posts List
                     SliverList(
                       delegate: SliverChildBuilderDelegate(
-                        (context, index) => Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: const PostCard(),
+                        (context, index) => const Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: PostCard(),
                         ),
                         childCount: 3,
                       ),

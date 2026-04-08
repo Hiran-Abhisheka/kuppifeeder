@@ -98,6 +98,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           password.isEmpty ||
                           username.isEmpty ||
                           fullname.isEmpty) {
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text('Please fill in all fields')),
@@ -128,14 +129,17 @@ class _SignupScreenState extends State<SignupScreen> {
                           });
 
                           if (!mounted) return;
+                          // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Signup successful!')),
+                            const SnackBar(content: Text('Signup successful!')),
                           );
+                          // ignore: use_build_context_synchronously
                           Navigator.pushReplacementNamed(context, '/login');
                         }
                       } catch (e) {
+                        // Check mounted before using context in catch
                         if (!mounted) return;
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Error: $e')),
                         );
