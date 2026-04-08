@@ -41,8 +41,8 @@ Before you begin, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Hiran-Abhisheka/kuppifeeder.git
-cd kuppifeeder
+git clone https://github.com/Hiran-Abhisheka/kuppifeed.git
+cd kuppifeed
 ```
 
 ### 2. Install Dependencies
@@ -233,8 +233,8 @@ Runs on push, pull requests, and weekly schedule.
 Add these to your project board:
 
 ```markdown
-![CI/CD](https://github.com/Hiran-Abhisheka/kuppifeeder/actions/workflows/ci.yml/badge.svg)
-![Security](https://github.com/Hiran-Abhisheka/kuppifeeder/actions/workflows/security.yml/badge.svg)
+![CI/CD](https://github.com/Hiran-Abhisheka/kuppifeed/actions/workflows/ci.yml/badge.svg)
+![Security](https://github.com/Hiran-Abhisheka/kuppifeed/actions/workflows/security.yml/badge.svg)
 ```
 
 ### Local Pre-Commit Checks
@@ -265,7 +265,8 @@ flutter build apk --debug
 | `google_fonts`     | Custom typography (Poppins)     |
 | `flutter_dotenv`   | Environment variable management |
 | `image_picker`     | Gallery/camera integration      |
-| `bcrypt`           | Password hashing                |
+| `uuid`             | UUID generation for user IDs    |
+| `shared_preferences` | Client-side data persistence  |
 
 For complete dependency tree, see [pubspec.yaml](pubspec.yaml).
 
@@ -351,7 +352,7 @@ This project is licensed under the **MIT License** — see LICENSE file for deta
 **Hiran Abhisheka**
 
 - GitHub: [@Hiran-Abhisheka](https://github.com/Hiran-Abhisheka)
-- Repository: [KuppiFeed](https://github.com/Hiran-Abhisheka/kuppifeeder)
+- Repository: [KuppiFeed](https://github.com/Hiran-Abhisheka/kuppifeed)
 
 ---
 
@@ -359,7 +360,7 @@ This project is licensed under the **MIT License** — see LICENSE file for deta
 
 - 📚 [Flutter Documentation](https://flutter.dev/docs)
 - 🔧 [Supabase Documentation](https://supabase.com/docs)
-- 🐛 [Report Issues](https://github.com/Hiran-Abhisheka/kuppifeeder/issues)
+- 🐛 [Report Issues](https://github.com/Hiran-Abhisheka/kuppifeed/issues)
 
 ---
 
