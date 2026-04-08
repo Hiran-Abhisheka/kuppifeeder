@@ -1,0 +1,2 @@
+# Add this to your pubspec.yaml under dependencies:
+# image_picker: ^1.0.0
