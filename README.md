@@ -6,6 +6,10 @@
 ![Dart](https://img.shields.io/badge/Dart-3.x-blue?logo=dart)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+<p align="center">
+   <img src="https://i.postimg.cc/xjMxPPTX/Screenshot-2026-03-23-120710.png" alt="Campus Shuttle Site Preview" width="800" />
+</p>
+
 ---
 
 ## ✨ Features
