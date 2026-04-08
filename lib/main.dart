@@ -23,7 +23,7 @@ void main() async {
 }
 
 class KuppiFeedApp extends StatelessWidget {
-  const KuppiFeedApp({Key? key}) : super(key: key);
+  const KuppiFeedApp({super.key});
 
   @override
   Widget build(BuildContext context) {

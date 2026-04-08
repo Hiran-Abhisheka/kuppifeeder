@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/post_card.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -11,7 +11,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [
+  final List<Widget> _screens = const [
     _FeedView(),
     Center(child: Text('Search', style: TextStyle(fontSize: 24))),
     Center(child: Text('Upload', style: TextStyle(fontSize: 24))),
@@ -73,6 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _FeedView extends StatelessWidget {
+  const _FeedView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(

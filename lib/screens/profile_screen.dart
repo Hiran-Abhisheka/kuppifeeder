@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../widgets/post_card.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -24,9 +24,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final authUser = Supabase.instance.client.auth.currentUser;
       final userId = authUser?.id;
 
-      print('=== Profile Loading ===');
-      print('Auth User ID: $userId');
-      print('Auth User Email: ${authUser?.email}');
+      debugPrint('=== Profile Loading ===');
+      debugPrint('Auth User ID: $userId');
+      debugPrint('Auth User Email: ${authUser?.email}');
 
       if (userId != null) {
         final response = await Supabase.instance.client
@@ -35,24 +35,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .eq('id', userId)
             .single();
 
-        print('User Data: $response');
+        debugPrint('User Data: $response');
 
-        setState(() {
-          userData = response;
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            userData = response;
+            isLoading = false;
+          });
+        }
       } else {
-        print('No authenticated user found');
+        debugPrint('No authenticated user found');
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading profile: $e');
+      debugPrint('Error type: ${e.runtimeType}');
+      if (mounted) {
         setState(() {
           isLoading = false;
         });
       }
-    } catch (e) {
-      print('Error loading profile: $e');
-      print('Error type: ${e.runtimeType}');
-      setState(() {
-        isLoading = false;
-      });
     }
   }
 

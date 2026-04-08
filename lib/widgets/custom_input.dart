@@ -7,12 +7,12 @@ class CustomInput extends StatelessWidget {
   final int maxLines;
 
   const CustomInput({
-    Key? key,
+    super.key,
     required this.hintText,
     this.obscureText = false,
     this.controller,
     this.maxLines = 1,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class CustomInput extends StatelessWidget {
         hintText: hintText,
         hintStyle: const TextStyle(color: Color(0xFF9A9A9A)),
         filled: true,
-        fillColor: Color(0xFFF5F6FA), // lighter box color
+        fillColor: const Color(0xFFF5F6FA), // lighter box color
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: Color(0xFFB2A4FF), width: 1.2),

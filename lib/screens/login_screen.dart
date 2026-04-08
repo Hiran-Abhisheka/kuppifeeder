@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_input.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +41,12 @@ class LoginScreen extends StatelessWidget {
                 const Text('Email',
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
-                CustomInput(hintText: 'Enter your email'),
+                const CustomInput(hintText: 'Enter your email'),
                 const SizedBox(height: 18),
                 const Text('Password',
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
-                CustomInput(hintText: 'Enter your password', obscureText: true),
+                const CustomInput(hintText: 'Enter your password', obscureText: true),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,

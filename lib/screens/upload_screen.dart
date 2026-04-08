@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_input.dart';
 
 class UploadScreen extends StatelessWidget {
-  const UploadScreen({Key? key}) : super(key: key);
+  const UploadScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
