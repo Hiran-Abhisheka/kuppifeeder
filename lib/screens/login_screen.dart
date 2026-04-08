@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:bcrypt/bcrypt.dart';
 import '../widgets/custom_input.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -39,6 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
+      print('🔍 DEBUG: Attempting login with email: $email');
+
       // Query database for user by email
       final userRecord = await Supabase.instance.client
           .from('users')
@@ -46,37 +49,54 @@ class _LoginScreenState extends State<LoginScreen> {
           .eq('email', email)
           .maybeSingle();
 
+      print('🔍 DEBUG: User record found: $userRecord');
+
       if (!mounted) return;
 
       if (userRecord != null) {
-        // Check if password matches
-        if (userRecord['password'] == password) {
-          // Password matches - save user ID and navigate
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('user_id', userRecord['id'].toString());
-          await prefs.setString('user_email', userRecord['email'].toString());
-          await prefs.setString('user_name', userRecord['username'].toString());
+        print('🔍 DEBUG: User exists, checking password');
+        final storedPassword = userRecord['password'];
+        print('🔍 DEBUG: Stored password type: ${storedPassword.runtimeType}');
+        print('🔍 DEBUG: Stored password length: ${storedPassword?.length}');
 
-          if (!mounted) return;
-          // ignore: use_build_context_synchronously
+        // Try bcrypt verification
+        try {
+          final passwordMatch = BCrypt.checkpw(password, storedPassword);
+          print('🔍 DEBUG: Password match result: $passwordMatch');
+
+          if (passwordMatch) {
+            // Password matches - save user ID and navigate
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('user_id', userRecord['id'].toString());
+            await prefs.setString('user_email', userRecord['email'].toString());
+            await prefs.setString(
+                'user_name', userRecord['username'].toString());
+
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('✓ Login successful')),
+            );
+            Navigator.pushReplacementNamed(context, '/home');
+          } else {
+            print('❌ DEBUG: Password verification failed');
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Invalid email or password'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        } catch (e) {
+          print('❌ DEBUG: Bcrypt error: $e');
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('✓ Login successful')),
-          );
-          // ignore: use_build_context_synchronously
-          Navigator.pushReplacementNamed(context, '/home');
-        } else {
-          // Password doesn't match
-          // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Invalid email or password'),
+            SnackBar(
+              content: Text('Password verification error: $e'),
               backgroundColor: Colors.red,
             ),
           );
         }
       } else {
-        // User not found
-        // ignore: use_build_context_synchronously
+        print('❌ DEBUG: User not found with email: $email');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Invalid email or password'),
@@ -85,8 +105,8 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } on Exception catch (e) {
+      print('❌ DEBUG: Login exception: $e');
       if (!mounted) return;
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: $e'),

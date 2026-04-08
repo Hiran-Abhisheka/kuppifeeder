@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../widgets/custom_input.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -336,6 +338,80 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _uploadProfilePicture() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile == null) return;
+
+      final file = File(pickedFile.path);
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('user_id');
+
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User ID not found')),
+        );
+        return;
+      }
+
+      // Delete old avatar if exists
+      if (userData?['avatar_url'] != null) {
+        try {
+          final Uri uri = Uri.parse(userData!['avatar_url']);
+          final pathSegments = uri.pathSegments;
+          if (pathSegments.length >= 2) {
+            final filePath =
+                pathSegments.sublist(pathSegments.length - 2).join('/');
+            await Supabase.instance.client.storage
+                .from('profilepic')
+                .remove([filePath]);
+          }
+        } catch (e) {
+          debugPrint('Error deleting old avatar: $e');
+        }
+      }
+
+      // Upload new avatar
+      final fileName = 'avatar_$userId.jpg';
+      await Supabase.instance.client.storage
+          .from('profilepic')
+          .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
+
+      // Get public URL
+      final publicUrl = Supabase.instance.client.storage
+          .from('profilepic')
+          .getPublicUrl(fileName);
+
+      // Update user record
+      await Supabase.instance.client
+          .from('users')
+          .update({'avatar_url': publicUrl}).eq('id', userId);
+
+      if (!mounted) return;
+
+      setState(() {
+        userData?['avatar_url'] = publicUrl;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile picture updated'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error uploading profile picture: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   Future<void> _logout() async {
     try {
       // Clear user data from SharedPreferences
@@ -427,37 +503,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha((0.2 * 255).toInt()),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Colors.white,
-                      child: userData?['avatar_url'] != null
-                          ? Image.network(
-                              userData!['avatar_url'],
-                              fit: BoxFit.cover,
-                            )
-                          : Container(
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFFB2A4FF),
-                              ),
-                              child: const Icon(
-                                Icons.person,
-                                size: 60,
-                                color: Colors.white,
-                              ),
+                  Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha((0.2 * 255).toInt()),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
-                    ),
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.white,
+                          child: userData?['avatar_url'] != null
+                              ? Image.network(
+                                  userData!['avatar_url'],
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFFB2A4FF),
+                                  ),
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 60,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      // Edit button overlay
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: _uploadProfilePicture,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF6C63FF),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(
+                                      (0.2 * 255).toInt()),
+                                  blurRadius: 8,
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   Text(

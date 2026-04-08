@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:bcrypt/bcrypt.dart';
 import '../widgets/custom_input.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -157,7 +158,11 @@ class _SignupScreenState extends State<SignupScreen> {
                               const uuid = Uuid();
                               final userId = uuid.v4();
 
-                              // Insert user profile data with plaintext password
+                              // Hash password with bcrypt
+                              final hashedPassword =
+                                  BCrypt.hashpw(password, BCrypt.gensalt());
+
+                              // Insert user profile data with hashed password
                               await Supabase.instance.client
                                   .from('users')
                                   .insert({
@@ -165,7 +170,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 'username': username,
                                 'full_name': fullname,
                                 'email': email,
-                                'password': password,
+                                'password': hashedPassword,
                               });
 
                               if (!mounted) return;
