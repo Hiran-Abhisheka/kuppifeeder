@@ -35,17 +35,20 @@ Before you begin, ensure you have:
 ## 🚀 Installation
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/Hiran-Abhisheka/kuppifeeder.git
 cd kuppifeeder
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 flutter pub get
 ```
 
 ### 3. Configure Environment Variables
+
 ```bash
 # Copy the template
 cp .env.example .env
@@ -54,12 +57,14 @@ cp .env.example .env
 ```
 
 **`.env` file format:**
+
 ```env
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your_anon_key_here
 ```
 
 ### 4. Run the App
+
 ```bash
 flutter run
 ```
@@ -94,15 +99,15 @@ android/, ios/, web/, windows/  # Platform-specific code
 
 ### Technology Stack
 
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| Frontend | Flutter | 3.x |
-| Language | Dart | 3.x |
-| Backend | Supabase | Latest |
-| Database | PostgreSQL | Via Supabase |
-| Authentication | Supabase Auth | Latest |
-| State Management | StatefulWidget | Native |
-| UI Framework | Material Design | 3.0 |
+| Component        | Technology      | Version      |
+| ---------------- | --------------- | ------------ |
+| Frontend         | Flutter         | 3.x          |
+| Language         | Dart            | 3.x          |
+| Backend          | Supabase        | Latest       |
+| Database         | PostgreSQL      | Via Supabase |
+| Authentication   | Supabase Auth   | Latest       |
+| State Management | StatefulWidget  | Native       |
+| UI Framework     | Material Design | 3.0          |
 
 ### App Flow
 
@@ -147,6 +152,7 @@ flutter pub add package_name
 ```
 
 ### Running Tests
+
 ```bash
 flutter test
 ```
@@ -154,41 +160,108 @@ flutter test
 ### Building for Release
 
 **Android:**
+
 ```bash
 flutter build apk --release
 ```
 
 **iOS:**
+
 ```bash
 flutter build ios --release
 ```
 
 **Web:**
+
 ```bash
 flutter build web
 ```
 
 ### Code Formatting
+
 ```bash
 dart format lib/
 ```
 
 ### Linting
+
 ```bash
 flutter analyze
 ```
 
 ---
 
+## ⚙️ CI/CD Pipeline
+
+### GitHub Actions Workflows
+
+This project uses **GitHub Actions** for automated testing, building, and security scanning.
+
+#### 1. **CI Workflow** (`ci.yml`)
+
+Runs on every push to `main` or `develop` branches and on pull requests.
+
+**Jobs:**
+
+- ✅ **Analyze** — Dart code analysis and formatting check
+- ✅ **Test** — Unit tests with coverage reporting
+- ✅ **Build Android** — Automated APK build (release)
+- ✅ **Build iOS** — Automated iOS build (no code sign)
+- ✅ **Build Web** — Automated web build
+
+**Artifacts Generated:**
+
+- `kuppifeed-release.apk` — Android release build
+- `kuppifeed-ios-release/` — iOS build directory
+- `kuppifeed-web-release/` — Web build directory
+
+#### 2. **Security Workflow** (`security.yml`)
+
+Runs on push, pull requests, and weekly schedule.
+
+**Jobs:**
+
+- 🔍 **Dependency Scan** — Check for outdated packages
+- 🚨 **Secret Detection** — Scan for exposed credentials (TruffleHog)
+
+### Workflow Status Badges
+
+Add these to your project board:
+
+```markdown
+![CI/CD](https://github.com/Hiran-Abhisheka/kuppifeeder/actions/workflows/ci.yml/badge.svg)
+![Security](https://github.com/Hiran-Abhisheka/kuppifeeder/actions/workflows/security.yml/badge.svg)
+```
+
+### Local Pre-Commit Checks
+
+Before pushing, run these locally to catch issues early:
+
+```bash
+# Analyze code
+flutter analyze
+
+# Format code
+dart format lib/
+
+# Run tests
+flutter test
+
+# Build for testing
+flutter build apk --debug
+```
+
+---
+
 ## 📦 Dependencies
 
-| Package | Purpose |
-|---------|---------|
-| `supabase_flutter` | Backend & authentication |
-| `google_fonts` | Custom typography (Poppins) |
-| `flutter_dotenv` | Environment variable management |
-| `image_picker` | Gallery/camera integration |
-| `bcrypt` | Password hashing |
+| Package            | Purpose                         |
+| ------------------ | ------------------------------- |
+| `supabase_flutter` | Backend & authentication        |
+| `google_fonts`     | Custom typography (Poppins)     |
+| `flutter_dotenv`   | Environment variable management |
+| `image_picker`     | Gallery/camera integration      |
+| `bcrypt`           | Password hashing                |
 
 For complete dependency tree, see [pubspec.yaml](pubspec.yaml).
 
@@ -197,6 +270,7 @@ For complete dependency tree, see [pubspec.yaml](pubspec.yaml).
 ## 📖 Usage Guide
 
 ### First Time Setup
+
 1. Create a Supabase account (free tier available)
 2. Create a new project
 3. Copy the project URL and anon key
@@ -206,15 +280,19 @@ For complete dependency tree, see [pubspec.yaml](pubspec.yaml).
 ### User Flow
 
 **New User:**
+
 - Tap "Sign Up" → Enter email & password → Create account
 
 **Existing User:**
+
 - Tap "Login" → Enter credentials → Access app
 
 **Uploading Recipe:**
+
 - Navigate to Upload tab → Fill recipe details → Submit
 
 **Viewing Profile:**
+
 - Navigate to Profile tab → View your posts and settings
 
 ---
@@ -230,6 +308,7 @@ Contributions are welcome! Here's how to help:
 5. **Open** a Pull Request
 
 ### Code Style Guidelines
+
 - Follow [Dart style guide](https://dart.dev/guides/language/effective-dart/style)
 - Use meaningful variable names
 - Add comments for complex logic
@@ -240,15 +319,18 @@ Contributions are welcome! Here's how to help:
 ## 🐛 Troubleshooting
 
 **"Failed to load environment variables"**
+
 - Ensure `.env` file exists in project root
 - Check file formatting (no extra spaces)
 
 **"Supabase connection error"**
+
 - Verify `SUPABASE_URL` and `SUPABASE_ANON_KEY` are correct
 - Ensure internet connection is active
 - Check Supabase project status
 
 **"Flutter not found"**
+
 - Add Flutter to PATH: [Installation Guide](https://docs.flutter.dev/get-started/install)
 - Run `flutter doctor` to verify installation
 
@@ -263,6 +345,7 @@ This project is licensed under the **MIT License** — see LICENSE file for deta
 ## 👨‍💻 Author
 
 **Hiran Abhisheka**
+
 - GitHub: [@Hiran-Abhisheka](https://github.com/Hiran-Abhisheka)
 - Repository: [KuppiFeed](https://github.com/Hiran-Abhisheka/kuppifeeder)
 
