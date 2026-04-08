@@ -259,14 +259,14 @@ flutter build apk --debug
 
 ## 📦 Dependencies
 
-| Package            | Purpose                         |
-| ------------------ | ------------------------------- |
-| `supabase_flutter` | Backend & authentication        |
-| `google_fonts`     | Custom typography (Poppins)     |
-| `flutter_dotenv`   | Environment variable management |
-| `image_picker`     | Gallery/camera integration      |
-| `uuid`             | UUID generation for user IDs    |
-| `shared_preferences` | Client-side data persistence  |
+| Package              | Purpose                         |
+| -------------------- | ------------------------------- |
+| `supabase_flutter`   | Backend & authentication        |
+| `google_fonts`       | Custom typography (Poppins)     |
+| `flutter_dotenv`     | Environment variable management |
+| `image_picker`       | Gallery/camera integration      |
+| `uuid`               | UUID generation for user IDs    |
+| `shared_preferences` | Client-side data persistence    |
 
 For complete dependency tree, see [pubspec.yaml](pubspec.yaml).
 
