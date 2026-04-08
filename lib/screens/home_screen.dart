@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/post_card.dart';
+import 'profile_screen.dart';
+import 'upload_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,8 +16,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = const [
     _FeedView(),
     Center(child: Text('Search', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Upload', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Profile', style: TextStyle(fontSize: 24))),
+    UploadScreen(),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {

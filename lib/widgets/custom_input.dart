@@ -5,6 +5,7 @@ class CustomInput extends StatelessWidget {
   final bool obscureText;
   final TextEditingController? controller;
   final int maxLines;
+  final bool enabled;
 
   const CustomInput({
     super.key,
@@ -12,6 +13,7 @@ class CustomInput extends StatelessWidget {
     this.obscureText = false,
     this.controller,
     this.maxLines = 1,
+    this.enabled = true,
   });
 
   @override
@@ -20,6 +22,7 @@ class CustomInput extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       maxLines: maxLines,
+      enabled: enabled,
       style: const TextStyle(
           color: Color(0xFF22223B), fontWeight: FontWeight.w500),
       decoration: InputDecoration(
@@ -34,6 +37,10 @@ class CustomInput extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: Color(0xFF6C63FF), width: 2),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 1),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),

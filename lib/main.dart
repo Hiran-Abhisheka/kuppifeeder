@@ -13,12 +13,34 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load environment variables
-  await dotenv.load(fileName: '.env');
+  try {
+    await dotenv.load(fileName: '.env');
+    debugPrint('✓ .env file loaded successfully');
+  } catch (e) {
+    debugPrint('⚠ Warning: .env file not found');
+  }
 
-  await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL'] ?? '',
-    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
-  );
+  final supabaseUrl = dotenv.env['SUPABASE_URL'];
+  final supabaseKey = dotenv.env['SUPABASE_ANON_KEY'];
+
+  debugPrint('Supabase URL: ${supabaseUrl != null ? '✓ Found' : '✗ Missing'}');
+  debugPrint('Supabase Key: ${supabaseKey != null ? '✓ Found' : '✗ Missing'}');
+
+  if (supabaseUrl != null && supabaseKey != null) {
+    try {
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: supabaseKey,
+      );
+      debugPrint('✓ Supabase initialized successfully');
+    } catch (e) {
+      debugPrint('✗ Supabase initialization error: $e');
+      rethrow;
+    }
+  } else {
+    debugPrint('✗ ERROR: Missing Supabase credentials in .env file!');
+  }
+
   runApp(const KuppiFeedApp());
 }
 
@@ -60,9 +82,8 @@ class KuppiFeedApp extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: '/welcome',
+      home: const WelcomeScreen(),
       routes: {
-        '/welcome': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignupScreen(),
         '/home': (context) => const HomeScreen(),

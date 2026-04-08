@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:bcrypt/bcrypt.dart';
+import 'package:uuid/uuid.dart';
 import '../widgets/custom_input.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -15,6 +15,16 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _fullnameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,20 +65,24 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 8),
                 CustomInput(
                     hintText: 'Enter your username',
-                    controller: _usernameController),
+                    controller: _usernameController,
+                    enabled: !_isLoading),
                 const SizedBox(height: 18),
                 const Text('Full Name',
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 CustomInput(
                     hintText: 'Enter your full name',
-                    controller: _fullnameController),
+                    controller: _fullnameController,
+                    enabled: !_isLoading),
                 const SizedBox(height: 18),
                 const Text('Email',
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 CustomInput(
-                    hintText: 'Enter your email', controller: _emailController),
+                    hintText: 'Enter your email',
+                    controller: _emailController,
+                    enabled: !_isLoading),
                 const SizedBox(height: 18),
                 const Text('Password',
                     style: TextStyle(fontWeight: FontWeight.w600)),
@@ -76,7 +90,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 CustomInput(
                     hintText: 'Enter your password',
                     controller: _passwordController,
-                    obscureText: true),
+                    obscureText: true,
+                    enabled: !_isLoading),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
@@ -88,66 +103,108 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    onPressed: () async {
-                      final username = _usernameController.text.trim();
-                      final fullname = _fullnameController.text.trim();
-                      final email = _emailController.text.trim();
-                      final password = _passwordController.text.trim();
+                    onPressed: _isLoading
+                        ? null
+                        : () async {
+                            final username = _usernameController.text.trim();
+                            final fullname = _fullnameController.text.trim();
+                            final email = _emailController.text.trim();
+                            final password = _passwordController.text.trim();
 
-                      if (email.isEmpty ||
-                          password.isEmpty ||
-                          username.isEmpty ||
-                          fullname.isEmpty) {
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Please fill in all fields')),
-                        );
-                        return;
-                      }
+                            if (email.isEmpty ||
+                                password.isEmpty ||
+                                username.isEmpty ||
+                                fullname.isEmpty) {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Please fill in all fields')),
+                              );
+                              return;
+                            }
 
-                      try {
-                        // Sign up the user
-                        final response =
-                            await Supabase.instance.client.auth.signUp(
-                          email: email,
-                          password: password,
-                        );
+                            setState(() {
+                              _isLoading = true;
+                            });
 
-                        if (response.user != null) {
-                          // Hash the password
-                          final hashedPassword =
-                              BCrypt.hashpw(password, BCrypt.gensalt());
+                            try {
+                              // Check if email already exists
+                              final existingUser = await Supabase
+                                  .instance.client
+                                  .from('users')
+                                  .select()
+                                  .eq('email', email)
+                                  .maybeSingle();
 
-                          // Insert user data into database
-                          await Supabase.instance.client.from('users').insert({
-                            'id': response.user!.id,
-                            'username': username,
-                            'full_name': fullname,
-                            'email': email,
-                            'password': hashedPassword,
-                          });
+                              if (existingUser != null) {
+                                if (!mounted) return;
+                                // ignore: use_build_context_synchronously
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Email already registered'),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                                if (mounted) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                }
+                                return;
+                              }
 
-                          if (!mounted) return;
-                          // ignore: use_build_context_synchronously
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Signup successful!')),
-                          );
-                          // ignore: use_build_context_synchronously
-                          Navigator.pushReplacementNamed(context, '/login');
-                        }
-                      } catch (e) {
-                        // Check mounted before using context in catch
-                        if (!mounted) return;
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error: $e')),
-                        );
-                      }
-                    },
-                    child: const Text('Sign Up',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
+                              // Generate a proper UUID for the user
+                              const uuid = Uuid();
+                              final userId = uuid.v4();
+
+                              // Insert user profile data with plaintext password
+                              await Supabase.instance.client
+                                  .from('users')
+                                  .insert({
+                                'id': userId,
+                                'username': username,
+                                'full_name': fullname,
+                                'email': email,
+                                'password': password,
+                              });
+
+                              if (!mounted) return;
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('✓ Signup successful!')),
+                              );
+                              // ignore: use_build_context_synchronously
+                              Navigator.pushReplacementNamed(context, '/login');
+                            } catch (e) {
+                              // Check mounted before using context in catch
+                              if (!mounted) return;
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Error: $e')),
+                              );
+                            } finally {
+                              if (mounted) {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            }
+                          },
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text('Sign Up',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                 ),
               ],
