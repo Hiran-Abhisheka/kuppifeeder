@@ -12,7 +12,7 @@ import 'screens/signup_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables - works for both dev and release
+  // Load environment variables (automatically from assets in release, filesystem in debug)
   try {
     await dotenv.load();
     debugPrint('✓ .env file loaded successfully');
@@ -23,7 +23,8 @@ void main() async {
   final supabaseUrl = dotenv.env['SUPABASE_URL'];
   final supabaseKey = dotenv.env['SUPABASE_ANON_KEY'];
 
-  debugPrint('Supabase URL: ${supabaseUrl != null ? '✓ Found' : '✗ Missing'}');
+  debugPrint(
+      'Supabase URL: ${supabaseUrl != null ? '✓ Found: $supabaseUrl' : '✗ Missing'}');
   debugPrint('Supabase Key: ${supabaseKey != null ? '✓ Found' : '✗ Missing'}');
 
   if (supabaseUrl != null && supabaseKey != null) {
