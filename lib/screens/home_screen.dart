@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../widgets/post_card.dart';
 import 'profile_screen.dart';
 import 'upload_screen.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = const [
     _FeedView(),
-    Center(child: Text('Search', style: TextStyle(fontSize: 24))),
+    SearchScreen(),
     UploadScreen(),
     ProfileScreen(),
   ];
