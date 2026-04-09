@@ -13,10 +13,10 @@ import 'screens/signup_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables from assets using rootBundle (works in APK)
+  // Load environment variables from assets using rootBundle
   try {
-    final envContent = await rootBundle.loadString('.env');
-    debugPrint('✓ .env file loaded from assets');
+    final envContent = await rootBundle.loadString('assets/.env');
+    debugPrint('✓ .env file loaded from assets (${envContent.length} bytes)');
     
     // Parse .env file manually
     final lines = envContent.split('\n');
@@ -24,27 +24,32 @@ void main() async {
       if (line.isNotEmpty && !line.startsWith('#')) {
         final parts = line.split('=');
         if (parts.length == 2) {
-          dotenv.env[parts[0].trim()] = parts[1].trim();
+          final key = parts[0].trim();
+          final value = parts[1].trim();
+          dotenv.env[key] = value;
+          debugPrint('✓ Loaded: $key=${value.substring(0, (value.length / 2).toInt())}...');
         }
       }
     }
-    debugPrint('✓ Environment variables parsed');
+    debugPrint('✓ Total env variables parsed: ${dotenv.env.length}');
   } catch (e) {
-    debugPrint('⚠ Could not load .env from assets: $e');
+    debugPrint('✗ Could not load assets/.env from assets: $e');
     debugPrint('Falling back to dotenv.load()...');
     try {
       await dotenv.load();
+      debugPrint('✓ Fallback dotenv.load() succeeded');
     } catch (e2) {
-      debugPrint('⚠ Also failed: $e2');
+      debugPrint('✗ Fallback also failed: $e2');
     }
   }
 
   final supabaseUrl = dotenv.env['SUPABASE_URL'];
   final supabaseKey = dotenv.env['SUPABASE_ANON_KEY'];
 
-  debugPrint(
-      'Supabase URL: ${supabaseUrl != null ? '✓ Found: $supabaseUrl' : '✗ Missing'}');
-  debugPrint('Supabase Key: ${supabaseKey != null ? '✓ Found' : '✗ Missing'}');
+  debugPrint('═════════════════════════════════════');
+  debugPrint('SUPABASE_URL: $supabaseUrl');
+  debugPrint('SUPABASE_ANON_KEY: ${supabaseKey?.substring(0, 20)}...');
+  debugPrint('═════════════════════════════════════');
 
   if (supabaseUrl != null && supabaseKey != null) {
     try {
